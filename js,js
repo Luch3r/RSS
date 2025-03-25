@@ -6,28 +6,36 @@ function resizeCanvas() {
     canvas.height = window.innerHeight;
 }
 
-// Игрок
 const player = {
-    x: canvas.width / 2,
-    y: canvas.height / 2,
+    x: canvas.width / 1,
+    y: canvas.height / 1,
     radius: 15,
     speed: 5,
     angle: 0,
     bullets: [],
 };
 
-// Стены
-const walls = [
-    { x: 100, y: 100, width: 200, height: 20 },
-    { x: 400, y: 150, width: 20, height: 200 },
-    { x: 150, y: 300, width: 250, height: 20 },
-    { x: 300, y: 400, width: 20, height: 200 },
-    { x: 50, y: 50, width: 20, height: 300 },
-    { x: 600, y: 100, width: 20, height: 300 },
-    { x: 200, y: 500, width: 400, height: 20 },
-    { x: 500, y: 300, width: 100, height: 20 },
-];
 
+const walls = [
+    { x: 100, y: 100, width: 200, height: 20 }, 
+    { x: 400, y: 150, width: 20, height: 200 }, 
+    { x: 150, y: 300, width: 250, height: 20 }, 
+    { x: 300, y: 400, width: 20, height: 200 }, 
+    { x: 50, y: 50, width: 20, height: 300 }, 
+    { x: 600, y: 100, width: 20, height: 300 },
+    { x: 200, y: 500, width: 400, height: 20 }, 
+    { x: 500, y: 300, width: 100, height: 20 },
+    { x: 50, y: 400, width: 200, height: 20 },
+    { x: 300, y: 100, width: 20, height: 300 },
+    { x: 700, y: 200, width: 20, height: 200 }, 
+    { x: 150, y: 600, width: 600, height: 20 }, 
+    { x: 400, y: 500, width: 20, height: 100 },
+    { x: 600, y: 400, width: 100, height: 20 },
+    { x: 200, y: 200, width: 20, height: 100 },
+    { x: 100, y: 700, width: 600, height: 20 },
+    { x: 250, y: 250, width: 100, height: 20, breakable: true },
+    { x: 450, y: 250, width: 100, height: 20, breakable: true }, 
+];
 const rooms = [
     {
         enemies: [
@@ -77,6 +85,54 @@ function drawBoss() {
     }
 }
 
+function checkCollisions() {
+    const room = rooms[currentRoomIndex];
+    player.bullets.forEach((bullet, bulletIndex) => {
+        room.enemies.forEach((enemy, enemyIndex) => {
+            const dx = bullet.x - enemy.x;
+            const dy = bullet.y - enemy.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < bullet.radius + enemy.radius) {
+                enemy.health--;
+                player.bullets.splice(bulletIndex, 1);
+                if (enemy.health <= 0) {
+                    room.enemies.splice(enemyIndex, 1);
+                }
+            }
+        });
+
+        if (room.boss) {
+            const dx = bullet.x - (canvas.width / 2);
+            const dy = bullet.y - (canvas.height / 4);
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < bullet.radius + 30) {
+                player.bullets.splice(bulletIndex, 1);
+            }
+        }
+    });
+
+    walls.forEach((wall) => {
+        player.bullets.forEach((bullet, bulletIndex) => {
+            if (bullet.x > wall.x && bullet.x < wall.x + wall.width &&
+                bullet.y > wall.y && bullet.y < wall.y + wall.height) {
+                if (wall.breakable) {
+                    // Удаляем ломаемую стену
+                    walls.splice(walls.indexOf(wall), 1);
+                }
+                player.bullets.splice(bulletIndex, 1);
+            }
+        });
+    });
+}
+
+function drawWalls() {
+    walls.forEach(wall => {
+        ctx.fillStyle = wall.breakable ? 'orange' : 'gray'; // Ломаемые стены оранжевые
+        ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
+    });
+}
 function drawBullets() {
     ctx.fillStyle = 'yellow';
     player.bullets.forEach(bullet => {
@@ -120,7 +176,7 @@ function checkCollisions() {
             }
         });
 
-        // Проверка на столкновение с боссом
+
         if (room.boss) {
             const dx = bullet.x - (canvas.width / 2);
             const dy = bullet.y - (canvas.height / 4);
@@ -132,7 +188,7 @@ function checkCollisions() {
         }
     });
 
-    // Проверка на столкновение с стенами
+
     walls.forEach(wall => {
         player.bullets.forEach((bullet, bulletIndex) => {
             if (bullet.x > wall.x && bullet.x < wall.x + wall.width &&
@@ -149,7 +205,7 @@ function resetRoom() {
         currentRoomIndex++;
         if (currentRoomIndex >= rooms.length) {
             alert('Вы победили все комнаты!');
-            currentRoomIndex = 0; // Сброс к первой комнате
+            currentRoomIndex = 0; 
         }
         spawnEnemies();
     }
@@ -158,7 +214,7 @@ function resetRoom() {
 function spawnEnemies() {
     const room = rooms[currentRoomIndex];
     if (room.enemies.length === 0 && !room.boss) {
-        // Здесь можно добавить логику для спавна врагов
+
     }
 }
 
@@ -166,15 +222,15 @@ function checkPlayerCollision(dx, dy) {
     for (const wall of walls) {
         if (player.x + dx + player.radius > wall.x && player.x + dx - player.radius < wall.x + wall.width &&
             player.y + dy + player.radius > wall.y && player.y + dy - player.radius < wall.y + wall.height) {
-            return true; // Столкновение со стеной
+            return true; 
         }
     }
-    return false; // Нет столкновения
+    return false; 
 }
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawWalls(); // Рисуем стены
+    drawWalls(); 
     drawPlayer();
     drawEnemies();
     drawBoss();
@@ -184,25 +240,51 @@ function gameLoop() {
     resetRoom();
     requestAnimationFrame(gameLoop);
 }
+function canSpawnEnemy(x, y, radius) {
+    for (const wall of walls) {
+        if (x + radius > wall.x && x - radius < wall.x + wall.width &&
+            y + radius > wall.y && y - radius < wall.y + wall.height) {
+            return false; 
+        }
+    }
+    return true;
+}
 
+function spawnEnemies() {
+    const room = rooms[currentRoomIndex];
+    if (room.enemies.length === 0 && !room.boss) {
+        const enemyCount = 8;
+        for (let i = 0; i < enemyCount; i++) {
+            let x, y;
+            do {
+                
+                x = Math.random() * canvas.width;
+                y = Math.random() * canvas.height;
+            } while (!canSpawnEnemy(x, y, 10)); 
+
+            
+            room.enemies.push({ x: x, y: y, radius: 10, health: 3 });
+        }
+    }
+}
 document.addEventListener('keydown', (event) => {
     let dx = 0;
     let dy = 0;
 
     if (event.code === 'KeyW') {
-        dy = -player.speed; // Вверх
+        dy = -player.speed; 
     }
     if (event.code === 'KeyS') {
-        dy = player.speed; // Вниз
+        dy = player.speed; 
     }
     if (event.code === 'KeyA') {
-        dx = -player.speed; // Влево
+        dx = -player.speed;
     }
     if (event.code === 'KeyD') {
-        dx = player.speed; // Вправо
+        dx = player.speed;
     }
 
-    // Проверка на столкновение перед движением
+
     if (!checkPlayerCollision(dx, dy)) {
         player.x += dx;
         player.y += dy;
@@ -210,7 +292,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 document.addEventListener('mousedown', (event) => {
-    if (event.button === 0) { // ЛКМ
+    if (event.button === 0) { 
         const bullet = {
             x: player.x,
             y: player.y,
@@ -228,9 +310,10 @@ document.addEventListener('mousemove', (event) => {
     player.angle = Math.atan2(dy, dx);
 });
 
-// Обработчик события для изменения размера канваса
+
 window.addEventListener('resize', resizeCanvas);
 
-// Инициализация канваса и запуск игры
+
 resizeCanvas();
 gameLoop();
+
