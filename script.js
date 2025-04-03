@@ -8,18 +8,17 @@ let painting = false;
 let currentTool = 'pencil';
 let brushColor = '#000000';
 let brushSize = 5;
-let startX, startY; // Начальные координаты для фигур
-
+let startX, startY; 
 function startPosition(e) {
     painting = true;
     startX = e.clientX - canvas.offsetLeft;
     startY = e.clientY - canvas.offsetTop;
-    draw(e); // Если это карандаш, сразу начинаем рисовать
+    draw(e);
 }
 
 function endPosition() {
     if (currentTool !== 'pencil') {
-        drawShape(); // Рисуем фигуру при отпускании мыши
+        drawShape(); 
     }
     painting = false;
     ctx.beginPath();
@@ -38,10 +37,10 @@ function draw(e) {
     ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
 }
 
-// Функция для рисования фигуры
+
 function drawShape() {
-    const width = 100; // Ширина фигуры (можно сделать динамической)
-    const height = 100; // Высота фигуры (можно сделать динамической)
+    const width = 100; 
+    const height = 100; 
     
     ctx.fillStyle = brushColor;
     ctx.strokeStyle = brushColor;
@@ -68,12 +67,12 @@ function drawShape() {
     }
 }
 
-// Устанавливаем события мыши
+
 canvas.addEventListener('mousedown', startPosition);
 canvas.addEventListener('mouseup', endPosition);
 canvas.addEventListener('mousemove', draw);
 
-// Обработчики для инструментов
+
 document.getElementById('color').addEventListener('input', (e) => {
     brushColor = e.target.value;
 });
@@ -91,7 +90,7 @@ document.getElementById('eraser').addEventListener('click', () => {
     brushColor = '#FFFFFF';
 });
 
-// Обработчики для фигур
+
 document.getElementById('squareOutline').addEventListener('click', () => {
     currentTool = 'squareOutline';
 });
@@ -108,7 +107,7 @@ document.getElementById('filledCircle').addEventListener('click', () => {
     currentTool = 'filledCircle';
 });
 
-// Сохранение изображения
+
 document.getElementById('save').addEventListener('click', () => {
     const link = document.createElement('a');
     link.download = 'drawing.png';
