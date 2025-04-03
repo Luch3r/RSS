@@ -1,8 +1,8 @@
 const items = [
     { name: "AK-47 | Redline", rarity: "Редкий", price: 15, imageUrl: "https://example.com/ak47-redline.jpg" },
-    { name: "M4A4 | Howl", rarity: "Легендарный", price: 50, imageUrl: "https://example.com/m4a4-howl.jpg" },
+    { name: "M4A4 | Howl", rarity: "Легендарный", price: 50, imageUrl: "i.webp" },
     { name: "Glock-18 | Fade", rarity: "Редкий", price: 10, imageUrl: "https://example.com/glock-fade.jpg" },
-    { name: "AWP | Dragon Lore", rarity: "Легендарный", price: 100, imageUrl: "https://example.com/awp-dragon-lore.jpg" },
+    { name: "AWP | Dragon Lore", rarity: "Легендарный", price: 100, imageUrl: "12.jpg" },
 ];
 
 document.getElementById("openCaseButton").addEventListener("click", openCase);
